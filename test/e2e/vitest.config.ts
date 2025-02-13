@@ -3,7 +3,7 @@ import vue from '@vitejs/plugin-vue';
 import vueRouter from 'unplugin-vue-router/vite';
 
 export default defineConfig({
-  plugins: [vueRouter(), vue()],
+  plugins: [vueRouter({ dts: false }), vue()],
   test: {
     environment: 'happy-dom',
     include: ['basic.test.ts'],
