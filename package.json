@@ -42,7 +42,10 @@
     "lint": "eslint . --fix",
     "format": "prettier --write .",
     "prepublishOnly": "pnpm build",
-    "release": "bumpp --commit --push --tag && pnpm publish --access public"
+    "release": "bumpp --commit --push --tag && pnpm publish --access public",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:update": "vitest run --update"
   },
   "peerDependencies": {
     "vite": ">=5.0.12",
@@ -62,6 +65,7 @@
     "typescript": "5.3.3",
     "unbuild": "2.0.0",
     "vite": "5.0.12",
+    "vitest": "^3.0.5",
     "vue-router": "4.2.5"
   },
   "pnpm": {

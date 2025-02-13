@@ -18,6 +18,11 @@ export interface Options {
    */
   importMode?: 'sync' | 'async';
   /**
+   * If set, wrap the route's internal component with a layout instead of adding a wrapping route
+   * @default false
+   */
+  wrapComponent?: boolean;
+  /**
    * If opened, fix →
    * https://github.com/JohnCampionJr/vite-plugin-vue-layouts/issues/134
    * @default false
@@ -31,6 +36,7 @@ export default function VueLayouts(options: Partial<Options> = {}): Plugin {
     defaultLayout = 'default',
     importMode = process.env.VITE_SSG ? 'sync' : 'async',
     skipTopLevelRouteLayout = false,
+    wrapComponent = false,
   } = options;
 
   const { virtualModuleId, resolvedVirtualModuleId } = createVirtualModuleID('vue-layouts');
@@ -49,6 +55,7 @@ export default function VueLayouts(options: Partial<Options> = {}): Plugin {
           importMode,
           defaultLayout,
           skipTopLevelRouteLayout,
+          wrapComponent,
         });
       }
     },

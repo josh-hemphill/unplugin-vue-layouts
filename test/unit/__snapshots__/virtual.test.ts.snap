@@ -1,0 +1,197 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`createVirtualModuleCode > generates code with default layout 1`] = `
+"
+    import type { RouteRecordRaw, Router } from 'vue-router'
+    export function createGetRoutes(router: Router, withLayout = false) {
+      const routes = router.getRoutes()
+      if (withLayout) {
+        return routes
+      }
+      return () => routes.filter(route => !route.meta?.isLayout)
+    }
+
+    export function setupLayouts(routes: RouteRecordRaw[]) {
+      const layouts = {}
+
+      const modules = import.meta.glob("/layouts/**/*.vue", { eager: true })
+
+      Object.entries(modules).forEach(([name, module]) => {
+        let key = name.replace("/layouts/", '').replace('.vue', '')
+        layouts[key] = module.default
+      })
+
+      function deepSetupLayout(lRoutes: RouteRecordRaw[], top = true) {
+        return lRoutes.map(route => {
+          // Process children first
+          if (route.children?.length > 0) {
+            route.children = deepSetupLayout(route.children, false)
+          }
+
+          // Skip if already processed
+          if (route.meta?.isLayout) {
+            return route
+          }
+
+          const layout = route.meta?.layout ?? 'default'
+
+          
+          
+          if (layout && layouts[layout]) {
+            
+            // Create a new route with the layout as the component
+            const layoutRoute = {
+              path: route.path,
+              component: layouts[layout],
+              meta: { ...route.meta, isLayout: true },
+              // Handle root path specially to avoid infinite nesting
+              children: top && route.path === '/' 
+                ? [route] 
+                : [{ ...route, path: '', meta: { ...route.meta, isLayout: false } }]
+            }
+            return layoutRoute
+            
+          }
+
+          return route
+        })
+      }
+
+      return deepSetupLayout(routes)
+    }
+  "
+`;
+
+exports[`createVirtualModuleCode > generates code with top level route layout skipping 1`] = `
+"
+    import type { RouteRecordRaw, Router } from 'vue-router'
+    export function createGetRoutes(router: Router, withLayout = false) {
+      const routes = router.getRoutes()
+      if (withLayout) {
+        return routes
+      }
+      return () => routes.filter(route => !route.meta?.isLayout)
+    }
+
+    export function setupLayouts(routes: RouteRecordRaw[]) {
+      const layouts = {}
+
+      const modules = import.meta.glob("/layouts/**/*.vue", { eager: true })
+
+      Object.entries(modules).forEach(([name, module]) => {
+        let key = name.replace("/layouts/", '').replace('.vue', '')
+        layouts[key] = module.default
+      })
+
+      function deepSetupLayout(lRoutes: RouteRecordRaw[], top = true) {
+        return lRoutes.map(route => {
+          // Process children first
+          if (route.children?.length > 0) {
+            route.children = deepSetupLayout(route.children, false)
+          }
+
+          // Skip if already processed
+          if (route.meta?.isLayout) {
+            return route
+          }
+
+          const layout = route.meta?.layout ?? 'default'
+
+          
+          // unplugin-vue-router adds a top-level route to the routing group, which we should skip (ref → https://github.com/JohnCampionJr/vite-plugin-vue-layouts/issues/134)
+          const skipLayout = top && !route.component && route.children?.find(r => (r.path === '' || r.path === '/') && r.meta?.isLayout)
+          if (skipLayout) {
+            return route
+          }
+        
+          
+          if (layout && layouts[layout]) {
+            
+            // Create a new route with the layout as the component
+            const layoutRoute = {
+              path: route.path,
+              component: layouts[layout],
+              meta: { ...route.meta, isLayout: true },
+              // Handle root path specially to avoid infinite nesting
+              children: top && route.path === '/' 
+                ? [route] 
+                : [{ ...route, path: '', meta: { ...route.meta, isLayout: false } }]
+            }
+            return layoutRoute
+            
+          }
+
+          return route
+        })
+      }
+
+      return deepSetupLayout(routes)
+    }
+  "
+`;
+
+exports[`createVirtualModuleCode > generates code with wrapped components 1`] = `
+"
+    import { h, defineAsyncComponent } from 'vue'
+import type { RouteRecordRaw, Router } from 'vue-router'
+    export function createGetRoutes(router: Router, withLayout = false) {
+      const routes = router.getRoutes()
+      if (withLayout) {
+        return routes
+      }
+      return () => routes.filter(route => !route.meta?.isLayout)
+    }
+
+    export function setupLayouts(routes: RouteRecordRaw[]) {
+      const layouts = {}
+
+      const modules = import.meta.glob("/layouts/**/*.vue", { eager: false })
+
+      Object.entries(modules).forEach(([name, module]) => {
+        let key = name.replace("/layouts/", '').replace('.vue', '')
+        layouts[key] = module
+      })
+
+      function deepSetupLayout(lRoutes: RouteRecordRaw[], top = true) {
+        return lRoutes.map(route => {
+          // Process children first
+          if (route.children?.length > 0) {
+            route.children = deepSetupLayout(route.children, false)
+          }
+
+          // Skip if already processed
+          if (route.meta?.isLayout) {
+            return route
+          }
+
+          const layout = route.meta?.layout ?? 'default'
+
+          
+          
+          if (layout && layouts[layout]) {
+            
+            if (!route.component) {
+              return route
+            }
+            return {
+              ...route,
+              component: h('div', [
+                h(layouts[layout]),
+                h(defineAsyncComponent(() => route.component())),
+              ]),
+              meta: {
+                ...route.meta,
+                isLayout: true
+              }
+            }
+            
+          }
+
+          return route
+        })
+      }
+
+      return deepSetupLayout(routes)
+    }
+  "
+`;

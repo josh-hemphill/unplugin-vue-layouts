@@ -1,0 +1,229 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`basic > should match snapshot with route wrapping > Route Wrapping 1`] = `
+[
+  {
+    "component": {
+      "__file": "./fixtures/pages/index.vue",
+      "render": [Function],
+    },
+    "name": "/",
+    "path": "/",
+  },
+  {
+    "component": {
+      "__file": "./fixtures/pages/about.vue",
+      "render": [Function],
+    },
+    "name": "/about",
+    "path": "/about",
+  },
+  {
+    "children": [
+      {
+        "component": {
+          "__file": "./fixtures/pages/meta_tagged/route_block.vue",
+          "render": [Function],
+        },
+        "meta": {
+          "layout": "custom",
+        },
+        "name": "/meta_tagged/route_block",
+        "path": "route_block",
+      },
+    ],
+    "path": "/meta_tagged",
+  },
+  {
+    "children": [
+      {
+        "component": {
+          "__file": "./fixtures/pages/nested/index.vue",
+          "render": [Function],
+        },
+        "name": "/nested/",
+        "path": "",
+      },
+      {
+        "component": {
+          "__file": "./fixtures/pages/nested/foo.vue",
+          "render": [Function],
+        },
+        "name": "/nested/foo",
+        "path": "foo",
+      },
+    ],
+    "path": "/nested",
+  },
+  {
+    "children": [
+      {
+        "component": {
+          "__file": "./fixtures/pages/parent/child.vue",
+          "render": [Function],
+        },
+        "name": "/parent/child",
+        "path": "child",
+      },
+    ],
+    "component": {
+      "__file": "./fixtures/pages/parent.vue",
+      "render": [Function],
+    },
+    "name": "/parent",
+    "path": "/parent",
+  },
+]
+`;
+
+exports[`basic > should match snapshot with wrapComponent > Wrapped Component 1`] = `
+[
+  {
+    "component": {
+      "__file": "./fixtures/pages/index.vue",
+      "render": [Function],
+    },
+    "name": "/",
+    "path": "/",
+  },
+  {
+    "component": {
+      "__file": "./fixtures/pages/about.vue",
+      "render": [Function],
+    },
+    "name": "/about",
+    "path": "/about",
+  },
+  {
+    "children": [
+      {
+        "component": {
+          "__file": "./fixtures/pages/meta_tagged/route_block.vue",
+          "render": [Function],
+        },
+        "meta": {
+          "layout": "custom",
+        },
+        "name": "/meta_tagged/route_block",
+        "path": "route_block",
+      },
+    ],
+    "path": "/meta_tagged",
+  },
+  {
+    "children": [
+      {
+        "component": {
+          "__file": "./fixtures/pages/nested/index.vue",
+          "render": [Function],
+        },
+        "name": "/nested/",
+        "path": "",
+      },
+      {
+        "component": {
+          "__file": "./fixtures/pages/nested/foo.vue",
+          "render": [Function],
+        },
+        "name": "/nested/foo",
+        "path": "foo",
+      },
+    ],
+    "path": "/nested",
+  },
+  {
+    "children": [
+      {
+        "component": {
+          "__file": "./fixtures/pages/parent/child.vue",
+          "render": [Function],
+        },
+        "name": "/parent/child",
+        "path": "child",
+      },
+    ],
+    "component": {
+      "__file": "./fixtures/pages/parent.vue",
+      "render": [Function],
+    },
+    "name": "/parent",
+    "path": "/parent",
+  },
+]
+`;
+
+exports[`basic > should work > Unwrapped routes 1`] = `
+[
+  {
+    "component": {
+      "__file": "./fixtures/pages/index.vue",
+      "render": [Function],
+    },
+    "name": "/",
+    "path": "/",
+  },
+  {
+    "component": {
+      "__file": "./fixtures/pages/about.vue",
+      "render": [Function],
+    },
+    "name": "/about",
+    "path": "/about",
+  },
+  {
+    "children": [
+      {
+        "component": {
+          "__file": "./fixtures/pages/meta_tagged/route_block.vue",
+          "render": [Function],
+        },
+        "meta": {
+          "layout": "custom",
+        },
+        "name": "/meta_tagged/route_block",
+        "path": "route_block",
+      },
+    ],
+    "path": "/meta_tagged",
+  },
+  {
+    "children": [
+      {
+        "component": {
+          "__file": "./fixtures/pages/nested/index.vue",
+          "render": [Function],
+        },
+        "name": "/nested/",
+        "path": "",
+      },
+      {
+        "component": {
+          "__file": "./fixtures/pages/nested/foo.vue",
+          "render": [Function],
+        },
+        "name": "/nested/foo",
+        "path": "foo",
+      },
+    ],
+    "path": "/nested",
+  },
+  {
+    "children": [
+      {
+        "component": {
+          "__file": "./fixtures/pages/parent/child.vue",
+          "render": [Function],
+        },
+        "name": "/parent/child",
+        "path": "child",
+      },
+    ],
+    "component": {
+      "__file": "./fixtures/pages/parent.vue",
+      "render": [Function],
+    },
+    "name": "/parent",
+    "path": "/parent",
+  },
+]
+`;
