@@ -81,14 +81,37 @@ export const getRoutes = async () => {
   return await codeToModule(routesCode, 'routes');
 };
 
+export function sanitizeComponentPaths(component: Exclude<RouteRecordRaw['component'], undefined | null>) {
+  if (typeof component === 'string') return component;
+  if (typeof component === 'function') return component;
+  const keys = Object.keys(component);
+  for (const key of keys) {
+    if (key === '__file' && typeof component[key] === 'string') {
+      component[key] = component[key].replace(currentDirNormalized, '.');
+    }
+    if (key === 'type' && typeof component[key] === 'object' && '__file' in component[key]) {
+      component[key]['__file'] = component[key]['__file'].replace(currentDirNormalized, '.');
+    }
+    if (key === 'children' && Array.isArray(component[key]) && component[key].length > 0) {
+      component[key] = component[key].map(sanitizeComponentPaths);
+    }
+  }
+  if (component.children || component.type) {
+    return {
+      children: component.children,
+      type: component.type,
+    };
+  }
+  return component;
+}
+
 export function sanitizeRouteComponentPaths(routes: RouteRecordRaw[]) {
   return routes.map((route) => {
     if (route.children) {
       route.children = sanitizeRouteComponentPaths(route.children);
     }
     if (route.component) {
-      // @ts-expect-error - we know the component has a __file property
-      route.component['__file'] = route.component['__file'].replace(currentDirNormalized, '.');
+      route.component = sanitizeComponentPaths(route.component);
     }
     return route;
   });

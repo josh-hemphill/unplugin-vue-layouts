@@ -23,7 +23,7 @@ export interface Options {
    */
   wrapComponent?: boolean;
   /**
-   * If opened, fix →
+   * If opened, fix:
    * https://github.com/JohnCampionJr/vite-plugin-vue-layouts/issues/134
    * @default false
    */

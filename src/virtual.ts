@@ -22,7 +22,8 @@ export async function createVirtualModuleCode(options: VirtualModuleCodeOptions)
   const isSync = importMode === 'sync';
 
   const skipCode = /* ts */ `
-    // unplugin-vue-router adds a top-level route to the routing group, which we should skip (ref → https://github.com/JohnCampionJr/vite-plugin-vue-layouts/issues/134)
+    // unplugin-vue-router adds a top-level route to the routing group, which we should skip (ref: https://github.com/JohnCampionJr/vite-plugin-vue-layouts/issues/134)
+    /** @type {boolean} */
     const skipLayout = top && !route.component && route.children?.find(r => (r.path === '' || r.path === '/') && r.meta?.isLayout)
     if (skipLayout) {
       return route
@@ -32,6 +33,7 @@ export async function createVirtualModuleCode(options: VirtualModuleCodeOptions)
   function createLayoutRoute() {
     return /* ts */ `
     // Create a new route with the layout as the component
+    /** @type {import('vue-router').RouteRecordRaw} */
     const layoutRoute = {
       path: route.path,
       component: layouts[layout],
@@ -50,7 +52,8 @@ export async function createVirtualModuleCode(options: VirtualModuleCodeOptions)
     if (!route.component) {
       return route
     }
-    return {
+    /** @type {import('vue-router').RouteRecordRaw} */
+    const wrappedRoute = {
       ...route,
       component: h('div', [
         h(layouts[layout]),
@@ -61,6 +64,7 @@ export async function createVirtualModuleCode(options: VirtualModuleCodeOptions)
         isLayout: true
       }
     }
+    return wrappedRoute
     `;
   }
 
@@ -68,16 +72,19 @@ export async function createVirtualModuleCode(options: VirtualModuleCodeOptions)
     return code.replace(/\n/g, `\n${' '.repeat(indent)}`);
   }
 
-  const importStatements = [
-    wrapComponent ? `import { h, define${isSync ? '' : 'Async'}Component } from 'vue'` : '',
-    `import type { RouteRecordRaw, Router } from 'vue-router'`,
-  ]
+  const importStatements = [wrapComponent ? `import { h, define${isSync ? '' : 'Async'}Component } from 'vue'` : '']
     .filter(Boolean)
     .join('\n');
 
   return /* ts */ `
     ${importStatements}
-    export function createGetRoutes(router: Router, withLayout = false) {
+
+    /**
+     * @param {Router} router
+     * @param {boolean} [withLayout=false]
+     * @returns {import('vue-router').RouteRecordRaw[] | (() => import('vue-router').RouteRecordRaw[])}
+     */
+    export function createGetRoutes(router, withLayout = false) {
       const routes = router.getRoutes()
       if (withLayout) {
         return routes
@@ -85,7 +92,12 @@ export async function createVirtualModuleCode(options: VirtualModuleCodeOptions)
       return () => routes.filter(route => !route.meta?.isLayout)
     }
 
-    export function setupLayouts(routes: RouteRecordRaw[]) {
+    /**
+     * @param {import('vue-router').RouteRecordRaw[]} routes
+     * @returns {import('vue-router').RouteRecordRaw[]}
+     */
+    export function setupLayouts(routes) {
+      /** @type {Record<string, any>} */
       const layouts = {}
 
       const modules = ${await createVirtualGlob(normalizedTarget, isSync)}
@@ -95,7 +107,12 @@ export async function createVirtualModuleCode(options: VirtualModuleCodeOptions)
         layouts[key] = ${isSync ? 'module.default' : 'module'}
       })
 
-      function deepSetupLayout(lRoutes: RouteRecordRaw[], top = true) {
+      /**
+       * @param {import('vue-router').RouteRecordRaw[]} lRoutes
+       * @param {boolean} [top=true]
+       * @returns {import('vue-router').RouteRecordRaw[]}
+       */
+      function deepSetupLayout(lRoutes, top = true) {
         return lRoutes.map(route => {
           // Process children first
           if (route.children?.length > 0) {

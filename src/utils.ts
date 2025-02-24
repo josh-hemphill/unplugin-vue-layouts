@@ -1,6 +1,6 @@
-import { posix } from 'node:path';
+import { normalizePath as normalizePathVite } from 'vite';
 
 export function normalizePath(path: string) {
   path = path.startsWith('/') ? path : `/${path}`;
-  return posix.normalize(path);
+  return normalizePathVite(path);
 }
